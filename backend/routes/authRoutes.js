@@ -9,12 +9,10 @@ import {
 
 const router = express.Router();
 
-// Intermediary middleware to check for validation errors
 const validateRequest = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         res.status(400);
-        // Throw an error with the first validation issue message
         throw new Error(errors.array()[0].msg);
     }
     next();

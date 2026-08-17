@@ -1,0 +1,80 @@
+tags:
+  - name: Auth
+    description: Authentication management
+
+paths:
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        201:
+          description: User registered successfully
+        400:
+          description: Invalid user data or user already exists
+
+  /api/auth/login:
+    post:
+      summary: Authenticate user & get access token
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Successfully logged in
+          headers:
+            Set-Cookie:
+              description: Contains the HttpOnly refresh token
+              schema:
+                type: string
+        401:
+          description: Invalid email or password
+
+  /api/auth/refresh-token:
+    post:
+      summary: Get a new access token using the HttpOnly refresh token cookie
+      tags: [Auth]
+      responses:
+        200:
+          description: Successfully generated new access token
+        401:
+          description: Not authorized, no refresh token
+        403:
+          description: Refresh token is expired, tampered, or invalid
+
+  /api/auth/logout:
+    post:
+      summary: Logout user and clear refresh token cookie
+      tags: [Auth]
+      responses:
+        200:
+          description: Logged out successfully

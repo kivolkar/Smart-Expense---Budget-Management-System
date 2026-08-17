@@ -1,0 +1,124 @@
+tags:
+  - name: Transactions
+    description: Financial records logging
+
+paths:
+  /api/transactions:
+    get:
+      summary: Fetch all transactions for the logged in user
+      tags: [Transactions]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of transactions
+        401:
+          description: Unauthorized
+          
+    post:
+      summary: Log a new financial transaction
+      tags: [Transactions]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, type, category]
+              properties:
+                amount:
+                  type: number
+                type:
+                  type: string
+                  enum: [income, expense]
+                category:
+                  type: string
+                  description: Mongo ID of a specific Category
+                description:
+                  type: string
+                date:
+                  type: string
+                  format: date-time
+      responses:
+        201:
+          description: Transaction successfully created
+        400:
+          description: Category validation failure (does not exist or wrong user)
+        401:
+          description: Unauthorized
+
+  /api/transactions/{id}:
+    get:
+      summary: Get details of a single transaction
+      tags: [Transactions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: The transaction payload
+        401:
+          description: Not authorized to access this transaction
+        404:
+          description: Transaction not found
+
+    put:
+      summary: Modify an existing transaction
+      tags: [Transactions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                type:
+                  type: string
+                  enum: [income, expense]
+                category:
+                  type: string
+                description:
+                  type: string
+                date:
+                  type: string
+                  format: date-time
+      responses:
+        200:
+          description: Transaction updated
+        401:
+          description: Unauthorized
+        404:
+          description: Transaction not found
+
+    delete:
+      summary: Delete a transaction
+      tags: [Transactions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Transaction completely removed
+        401:
+          description: Unauthorized
