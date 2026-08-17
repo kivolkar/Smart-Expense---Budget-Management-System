@@ -2,21 +2,57 @@ import asyncHandler from 'express-async-handler';
 import Transaction from '../models/Transaction.js';
 import Category from '../models/Category.js';
 
+// @desc    Get income, expense and balance totals
+// @route   GET /api/transactions/summary
+// @access  Private
+export const getTransactionSummary = asyncHandler(async (req, res) => {
+    // We use the advanced MongoDB Aggregation Pipeline to mathematically fold the data instantly!
+    const summary = await Transaction.aggregate([
+        {
+            $match: { user: req.user._id } // Only aggregate this specific user's logic
+        },
+        {
+            $group: {
+                _id: '$type', // Group into exactly two piles: 'income' and 'expense'
+                totalAmount: { $sum: '$amount' } // Add all the values in each pile together
+            }
+        }
+    ]);
+
+    // Format the raw aggregation array into a clean JSON object for the frontend
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    summary.forEach(item => {
+        if (item._id === 'income') totalIncome = item.totalAmount;
+        if (item._id === 'expense') totalExpense = item.totalAmount;
+    });
+
+    res.json({
+        totalIncome,
+        totalExpense,
+        balance: totalIncome - totalExpense
+    });
+});
+
 // @desc    Create new transaction
 // @route   POST /api/transactions
 // @access  Private
 export const createTransaction = asyncHandler(async (req, res) => {
     const { amount, type, category, paymentMethod, description, date } = req.body;
+    let receiptUrl = null;
+    
+    // If Multer successfully intercepted a file, save the path
+    if (req.file) {
+        receiptUrl = `/uploads/${req.file.filename}`;
+    }
 
     // Validate if the category exists and belongs to the user
-    // This is the relational check to prevent spoofing
     const categoryExists = await Category.findById(category);
-    
     if (!categoryExists) {
         res.status(404);
         throw new Error('Category not found');
     }
-
     if (categoryExists.user.toString() !== req.user._id.toString()) {
         res.status(401);
         throw new Error('Not authorized to use this category');
@@ -28,6 +64,7 @@ export const createTransaction = asyncHandler(async (req, res) => {
         type,
         category,
         paymentMethod,
+        receiptUrl, // Saving the new file URL
         description,
         date: date || Date.now()
     });
@@ -42,23 +79,18 @@ export const createTransaction = asyncHandler(async (req, res) => {
 export const getTransactions = asyncHandler(async (req, res) => {
     const { category, type, paymentMethod, startDate, endDate } = req.query;
 
-    // Build the query object starting with the required user filter
     let query = { user: req.user._id };
 
-    // Apply optional filters if they exist in the request query
     if (category) query.category = category;
     if (type) query.type = type;
     if (paymentMethod) query.paymentMethod = paymentMethod;
     
-    // Apply date range filter if provided
     if (startDate || endDate) {
         query.date = {};
         if (startDate) query.date.$gte = new Date(startDate);
         if (endDate) query.date.$lte = new Date(endDate);
     }
 
-    // Populate replaces the category ID string with an object containing name, type & icon!
-    // Sorting by date -1 ensures newest transactions are at the top
     const transactions = await Transaction.find(query)
         .populate('category', 'name type icon')
         .sort({ date: -1 }); 
@@ -98,7 +130,6 @@ export const updateTransaction = asyncHandler(async (req, res) => {
 
         const { amount, type, category, paymentMethod, description, date } = req.body;
 
-        // If user is attempting to change the category, we must re-validate it!
         if (category && category !== transaction.category.toString()) {
             const categoryExists = await Category.findById(category);
             
@@ -114,6 +145,11 @@ export const updateTransaction = asyncHandler(async (req, res) => {
         transaction.paymentMethod = paymentMethod || transaction.paymentMethod;
         transaction.description = description !== undefined ? description : transaction.description;
         transaction.date = date || transaction.date;
+        
+        // If a new file is uploaded, overwrite the old URL
+        if (req.file) {
+            transaction.receiptUrl = `/uploads/${req.file.filename}`;
+        }
 
         const updatedTransaction = await transaction.save();
         res.json(updatedTransaction);
@@ -135,6 +171,8 @@ export const deleteTransaction = asyncHandler(async (req, res) => {
             throw new Error('Not authorized to delete this transaction');
         }
 
+        // Ideally in a production app you'd also write an fs.unlinkSync to delete the 
+        // the local file inside uploads/ so they don't pile up, but for now this is fine.
         await transaction.deleteOne();
         res.json({ message: 'Transaction removed' });
     } else {

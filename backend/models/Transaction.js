@@ -25,6 +25,9 @@ const transactionSchema = new mongoose.Schema({
         enum: ['cash', 'credit_card', 'debit_card', 'upi', 'bank_transfer'],
         required: true
     },
+    receiptUrl: {
+        type: String, // String pointing to the static uploaded image
+    },
     description: {
         type: String,
     },
