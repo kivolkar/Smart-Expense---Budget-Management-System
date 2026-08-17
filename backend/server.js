@@ -11,6 +11,7 @@ import connectDB from "./config/database.js";
 import authRoutes from "./routes/authRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
+import budgetRoutes from "./routes/budgetRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 connectDB();
@@ -21,7 +22,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 const __dirname = path.resolve();
-// Make the uploads folder publicly accessible via URL /uploads so frontend can view images
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // Mount Swagger UI
@@ -31,6 +31,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/budgets', budgetRoutes);
 
 // Error Handling Middlewares (must be at the end)
 app.use(notFound);
