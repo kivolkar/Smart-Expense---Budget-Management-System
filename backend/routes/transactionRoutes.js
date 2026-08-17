@@ -1,5 +1,5 @@
 import express from 'express';
-import { body, validationResult } from 'express-validator';
+import { body, query, validationResult } from 'express-validator';
 import {
     createTransaction,
     getTransactions,
@@ -20,14 +20,28 @@ const validateRequest = (req, res, next) => {
     next();
 };
 
+const paymentMethods = ['cash', 'credit_card', 'debit_card', 'upi', 'bank_transfer'];
+
 router.route('/')
-    .get(protect, getTransactions)
+    .get(
+        protect,
+        [
+            query('startDate').optional().isISO8601().toDate().withMessage('Invalid startDate format'),
+            query('endDate').optional().isISO8601().toDate().withMessage('Invalid endDate format'),
+            query('type').optional().isIn(['income', 'expense']).withMessage('Invalid type filter'),
+            query('paymentMethod').optional().isIn(paymentMethods).withMessage('Invalid paymentMethod filter'),
+            query('category').optional().isMongoId().withMessage('Invalid category ID filter'),
+            validateRequest
+        ],
+        getTransactions
+    )
     .post(
         protect,
         [
             body('amount').isNumeric().withMessage('Amount must be a number').notEmpty().withMessage('Amount is required'),
             body('type').isIn(['income', 'expense']).withMessage('Type must be either income or expense'),
             body('category').isMongoId().withMessage('Invalid Category ID'),
+            body('paymentMethod').isIn(paymentMethods).withMessage('Invalid payment method'),
             body('date').optional().isISO8601().toDate().withMessage('Invalid date format'),
             validateRequest
         ],
@@ -42,6 +56,7 @@ router.route('/:id')
             body('amount').optional().isNumeric().withMessage('Amount must be a number'),
             body('type').optional().isIn(['income', 'expense']).withMessage('Type must be either income or expense'),
             body('category').optional().isMongoId().withMessage('Invalid Category ID'),
+            body('paymentMethod').optional().isIn(paymentMethods).withMessage('Invalid payment method'),
             body('date').optional().isISO8601().toDate().withMessage('Invalid date format'),
             validateRequest
         ],

@@ -9,9 +9,39 @@ paths:
       tags: [Transactions]
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          description: Filter transactions occurring on or after this date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          description: Filter transactions occurring on or before this date
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [income, expense]
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Filter by category Mongo ID
+        - in: query
+          name: paymentMethod
+          schema:
+            type: string
+            enum: ['cash', 'credit_card', 'debit_card', 'upi', 'bank_transfer']
       responses:
         200:
-          description: List of transactions
+          description: List of transactions matching query
+        400:
+          description: Invalid query data
         401:
           description: Unauthorized
           
@@ -26,7 +56,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [amount, type, category]
+              required: [amount, type, category, paymentMethod]
               properties:
                 amount:
                   type: number
@@ -36,6 +66,9 @@ paths:
                 category:
                   type: string
                   description: Mongo ID of a specific Category
+                paymentMethod:
+                  type: string
+                  enum: ['cash', 'credit_card', 'debit_card', 'upi', 'bank_transfer']
                 description:
                   type: string
                 date:
@@ -45,7 +78,7 @@ paths:
         201:
           description: Transaction successfully created
         400:
-          description: Category validation failure (does not exist or wrong user)
+          description: Validations failure
         401:
           description: Unauthorized
 
@@ -91,6 +124,9 @@ paths:
                 type:
                   type: string
                   enum: [income, expense]
+                paymentMethod:
+                  type: string
+                  enum: ['cash', 'credit_card', 'debit_card', 'upi', 'bank_transfer']
                 category:
                   type: string
                 description:

@@ -20,6 +20,11 @@ const transactionSchema = new mongoose.Schema({
         ref: 'Category',
         required: true
     },
+    paymentMethod: {
+        type: String,
+        enum: ['cash', 'credit_card', 'debit_card', 'upi', 'bank_transfer'],
+        required: true
+    },
     description: {
         type: String,
     },

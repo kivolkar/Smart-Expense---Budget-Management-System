@@ -6,7 +6,7 @@ import Category from '../models/Category.js';
 // @route   POST /api/transactions
 // @access  Private
 export const createTransaction = asyncHandler(async (req, res) => {
-    const { amount, type, category, description, date } = req.body;
+    const { amount, type, category, paymentMethod, description, date } = req.body;
 
     // Validate if the category exists and belongs to the user
     // This is the relational check to prevent spoofing
@@ -27,6 +27,7 @@ export const createTransaction = asyncHandler(async (req, res) => {
         amount,
         type,
         category,
+        paymentMethod,
         description,
         date: date || Date.now()
     });
@@ -35,12 +36,33 @@ export const createTransaction = asyncHandler(async (req, res) => {
     res.status(201).json(createdTransaction);
 });
 
-// @desc    Get all transactions for user
+// @desc    Get all transactions for user (with dynamic filtering)
 // @route   GET /api/transactions
 // @access  Private
 export const getTransactions = asyncHandler(async (req, res) => {
+    const { category, type, paymentMethod, startDate, endDate } = req.query;
+
+    // Build the query object starting with the required user filter
+    let query = { user: req.user._id };
+
+    // Apply optional filters if they exist in the request query
+    if (category) query.category = category;
+    if (type) query.type = type;
+    if (paymentMethod) query.paymentMethod = paymentMethod;
+    
+    // Apply date range filter if provided
+    if (startDate || endDate) {
+        query.date = {};
+        if (startDate) query.date.$gte = new Date(startDate);
+        if (endDate) query.date.$lte = new Date(endDate);
+    }
+
     // Populate replaces the category ID string with an object containing name, type & icon!
-    const transactions = await Transaction.find({ user: req.user._id }).populate('category', 'name type icon');
+    // Sorting by date -1 ensures newest transactions are at the top
+    const transactions = await Transaction.find(query)
+        .populate('category', 'name type icon')
+        .sort({ date: -1 }); 
+
     res.json(transactions);
 });
 
@@ -74,7 +96,7 @@ export const updateTransaction = asyncHandler(async (req, res) => {
             throw new Error('Not authorized to update this transaction');
         }
 
-        const { amount, type, category, description, date } = req.body;
+        const { amount, type, category, paymentMethod, description, date } = req.body;
 
         // If user is attempting to change the category, we must re-validate it!
         if (category && category !== transaction.category.toString()) {
@@ -89,6 +111,7 @@ export const updateTransaction = asyncHandler(async (req, res) => {
         transaction.amount = amount ?? transaction.amount;
         transaction.type = type || transaction.type;
         transaction.category = category || transaction.category;
+        transaction.paymentMethod = paymentMethod || transaction.paymentMethod;
         transaction.description = description !== undefined ? description : transaction.description;
         transaction.date = date || transaction.date;
 
