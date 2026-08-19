@@ -8,6 +8,7 @@ import type { Transaction, TransactionFilters as FilterType } from '../../types'
 import TransactionTable from '../../components/transactions/TransactionTable';
 import TransactionFiltersBar from '../../components/transactions/TransactionFilters';
 import TransactionModal from '../../components/transactions/TransactionModal';
+import ConfirmModal from '../../components/ui/ConfirmModal';
 
 export default function TransactionsPage() {
   const [filters, setFilters] = useState<FilterType>({ page: 1, limit: 10, sort: 'newest' });
@@ -27,16 +28,23 @@ export default function TransactionsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingData, setEditingData] = useState<Transaction | null>(null);
 
-  const handleDelete = async (id: string) => {
-    // Basic browser confirm for now
-    if (confirm('Are you sure you want to permanently delete this transaction?')) {
-      try {
-        await transactionService.delete(id);
-        toast.success('Transaction deleted');
-        refetch();
-      } catch (err) {
-        // Axios interceptor handles global toast
-      }
+  // Delete Modal State
+  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
+
+  const requestDelete = (id: string) => {
+    setTransactionToDelete(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!transactionToDelete) return;
+    try {
+      await transactionService.delete(transactionToDelete);
+      toast.success('Transaction permanently deleted');
+      refetch();
+    } catch (err) {
+      // Axios interceptor handles global toast
+    } finally {
+      setTransactionToDelete(null);
     }
   };
 
@@ -74,7 +82,7 @@ export default function TransactionsPage() {
           transactions={data?.transactions || []} 
           loading={loading} 
           onEdit={openEdit} 
-          onDelete={handleDelete} 
+          onDelete={requestDelete} 
         />
 
         {/* Dynamic Pagination Controls */}
@@ -107,6 +115,16 @@ export default function TransactionsPage() {
         onClose={() => setIsModalOpen(false)} 
         onSuccess={refetch}
         editingTransaction={editingData}
+      />
+
+      {/* Danger Deletion Modal */}
+      <ConfirmModal
+        isOpen={!!transactionToDelete}
+        onClose={() => setTransactionToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete Transaction"
+        message="Are you sure you want to permanently delete this transaction? This action will permanently modify your analytical history and cannot be undone."
+        confirmText="Delete it"
       />
     </div>
   );

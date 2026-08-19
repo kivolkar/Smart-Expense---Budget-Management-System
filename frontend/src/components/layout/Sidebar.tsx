@@ -9,6 +9,7 @@ import {
   Lightbulb,
   ChevronLeft,
   ChevronRight,
+  HelpCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -20,6 +21,7 @@ const navItems = [
   { path: '/savings-goals', label: 'Savings Goals', icon: Target },
   { path: '/analytics', label: 'Analytics', icon: BarChart3 },
   { path: '/insights', label: 'Insights', icon: Lightbulb },
+  { path: '/guide', label: 'Guide', icon: HelpCircle },
 ];
 
 export default function Sidebar() {

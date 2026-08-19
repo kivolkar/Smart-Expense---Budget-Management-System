@@ -7,14 +7,13 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import TransactionsPage from './pages/dashboard/TransactionsPage';
+import CategoriesPage from './pages/dashboard/CategoriesPage';
+import BudgetsPage from './pages/dashboard/BudgetsPage';
+import SavingsGoalsPage from './pages/dashboard/SavingsGoalsPage';
+import AnalyticsPage from './pages/dashboard/AnalyticsPage';
+import InsightsPage from './pages/dashboard/InsightsPage';
+import GuidePage from './pages/dashboard/GuidePage';
 import type { ReactNode } from 'react';
-
-// Page placeholders — will be replaced in Phase 6-8
-const CategoriesPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Categories</h1><p className="page-subtitle mt-1">Organize your finances</p></div>;
-const BudgetsPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Budgets</h1><p className="page-subtitle mt-1">Set spending limits</p></div>;
-const SavingsGoalsPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Savings Goals</h1><p className="page-subtitle mt-1">Track your targets</p></div>;
-const AnalyticsPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Analytics</h1><p className="page-subtitle mt-1">Visualize your data</p></div>;
-const InsightsPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Insights</h1><p className="page-subtitle mt-1">Smart recommendations</p></div>;
 
 // Auth guard — redirects unauthenticated users to login
 function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -56,6 +55,7 @@ function AppRoutes() {
         <Route path="/savings-goals" element={<SavingsGoalsPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/insights" element={<InsightsPage />} />
+        <Route path="/guide" element={<GuidePage />} />
       </Route>
 
       {/* Catch-all redirect */}

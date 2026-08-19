@@ -93,7 +93,7 @@ export default function TransactionTable({ transactions, loading, onEdit, onDele
                   {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
                 </td>
                 <td className="p-4 text-right">
-                  <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center justify-end gap-3">
                     <button onClick={() => onEdit(tx)} className="text-sm font-medium text-primary hover:text-primary-light">
                       Edit
                     </button>
