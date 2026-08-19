@@ -1,0 +1,123 @@
+tags:
+  - name: Saving Goals
+    description: Financial milestones and predictive timelines
+
+paths:
+  /api/saving-goals:
+    get:
+      summary: Fetch user saving goals with predictive completion dates
+      tags: [Saving Goals]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Array of saving goals dynamically enriched with `remainingAmount`, `percentageCompleted`, `estimatedCompletionDate` based on user velocity, and `averageDailySavings`.
+        401:
+          description: Unauthorized
+          
+    post:
+      summary: Initialize a new financial target
+      tags: [Saving Goals]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, targetAmount, targetDate]
+              properties:
+                name:
+                  type: string
+                  description: Display name of the goal e.g., 'Vacation Fund'
+                targetAmount:
+                  type: number
+                currentAmount:
+                  type: number
+                  description: Optional initial seed money
+                targetDate:
+                  type: string
+                  format: date-time
+      responses:
+        201:
+          description: Goal successfully created
+        400:
+          description: Target date occurs in the past 
+        401:
+          description: Unauthorized
+
+  /api/saving-goals/{id}:
+    get:
+      summary: Get details of a single saving goal
+      tags: [Saving Goals]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Goal object populated with dynamic stats
+        401:
+          description: Not authorized to access this goal
+        404:
+          description: Goal not found
+
+    put:
+      summary: Modify goal parameters or contribute savings
+      description: To contribute money to the goal, update the `currentAmount` field directly. To rename the goal, pass the new `name`.
+      tags: [Saving Goals]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                targetAmount:
+                  type: number
+                currentAmount:
+                  type: number
+                targetDate:
+                  type: string
+                  format: date-time
+                status:
+                  type: string
+                  enum: [active, completed, abandoned]
+      responses:
+        200:
+          description: Goal modified
+        401:
+          description: Unauthorized
+        404:
+          description: Record missing.
+
+    delete:
+      summary: Forgets a saving goal
+      tags: [Saving Goals]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Goal deleted
+        401:
+          description: Unauthorized

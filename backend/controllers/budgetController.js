@@ -42,7 +42,7 @@ export const createBudget = asyncHandler(async (req, res) => {
 // @desc    Get all budgets for user
 // @route   GET /api/budgets
 // @access  Private
-// @advanced Uses transaction pipeline to append accurate spentAmount
+// @advanced Uses transaction pipeline to append accurate spentAmount + calculation metrics
 export const getBudgets = asyncHandler(async (req, res) => {
     const rawBudgets = await Budget.find({ user: req.user._id }).populate('category', 'name type icon');
 
@@ -67,11 +67,20 @@ export const getBudgets = asyncHandler(async (req, res) => {
         ]);
 
         const spentAmount = summary.length > 0 ? summary[0].totalSpent : 0;
+        
+        // --- ADVANCED METRICS MODULE ---
+        const remainingAmount = budget.amount - spentAmount;
+        let percentageUsed = budget.amount > 0 ? (spentAmount / budget.amount) * 100 : 0;
+        percentageUsed = Math.round(percentageUsed * 100) / 100; // Round strictly to 2 decimal points
+        const isExceeded = spentAmount > budget.amount;
 
         // Reconstruct the response replacing mongoose wrapper with pure JSON
         return {
             ...budget._doc,
-            spentAmount
+            spentAmount,
+            remainingAmount,
+            percentageUsed,
+            isExceeded
         };
     }));
 
@@ -108,9 +117,20 @@ export const getBudgetById = asyncHandler(async (req, res) => {
             }
         ]);
 
+        const spentAmount = summary.length > 0 ? summary[0].totalSpent : 0;
+        
+        // --- ADVANCED METRICS MODULE ---
+        const remainingAmount = budget.amount - spentAmount;
+        let percentageUsed = budget.amount > 0 ? (spentAmount / budget.amount) * 100 : 0;
+        percentageUsed = Math.round(percentageUsed * 100) / 100;
+        const isExceeded = spentAmount > budget.amount;
+
         res.json({
             ...budget._doc,
-            spentAmount: summary.length > 0 ? summary[0].totalSpent : 0
+            spentAmount,
+            remainingAmount,
+            percentageUsed,
+            isExceeded
         });
     } else {
         res.status(404);

@@ -5,13 +5,13 @@ tags:
 paths:
   /api/budgets:
     get:
-      summary: Fetch all user budgets including dynamically generated spentAmounts
+      summary: Fetch all user budgets including full mathematical breakdown
       tags: [Budgets]
       security:
         - bearerAuth: []
       responses:
         200:
-          description: Array of budgets.
+          description: Array of budgets, natively decorated with `spentAmount`, `remainingAmount`, `percentageUsed`, and `isExceeded` status boolean dynamically configured by the server. 
         401:
           description: Unauthorized
           
@@ -62,7 +62,7 @@ paths:
             type: string
       responses:
         200:
-          description: Specific budget constraint data
+          description: Specific budget constraint data Native (spentAmount, remainingAmount, percentageUsed, isExceeded included)
         401:
           description: Not authorized to access this constraint
         404:
