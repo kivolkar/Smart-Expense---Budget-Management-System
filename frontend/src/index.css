@@ -1,111 +1,242 @@
+/* ============================================
+   Google Fonts — Inter
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   CSS Custom Properties (Design Tokens)
+   These feed the Tailwind config AND can be
+   used directly via var(--token) for edge cases.
+   ============================================ */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --color-primary: #6366f1;
+  --color-primary-light: #818cf8;
+  --color-primary-dark: #4f46e5;
+  --color-accent: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-surface: #1e1e2e;
+  --color-surface-hover: #2a2a3d;
+  --color-background: #0f0f1a;
+  --color-text: #e2e8f0;
+  --color-text-muted: #94a3b8;
+  --color-border: #2e2e42;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --touch-target: 44px;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  --spacing-page: 1rem;
+  --spacing-page-md: 1.5rem;
+  --spacing-page-lg: 2rem;
+}
+
+/* ============================================
+   Base Layer — Global Resets
+   ============================================ */
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply bg-background text-text-primary font-sans antialiased;
+    min-height: 100vh;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Custom scrollbar for the dark theme */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-text-muted;
+  }
+
+  /* Focus ring for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+/* ============================================
+   Component Layer — Reusable UI Classes
+   Use these across the entire app to avoid
+   repeating styling. ONE source of truth.
+   ============================================ */
+@layer components {
+  /* === Cards === */
+  .card {
+    @apply bg-surface rounded-lg border border-border p-4 md:p-6;
+    box-shadow: var(--shadow-card);
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  .card-hover {
+    @apply card transition-all duration-300;
+  }
+  .card-hover:hover {
+    box-shadow: var(--shadow-glow);
+    @apply border-primary/30;
+  }
+  .card-hover:active {
+    transform: scale(0.98);
+  }
+
+  /* === Buttons === */
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white font-medium px-4 py-2.5 rounded-md transition-colors cursor-pointer;
+    min-height: var(--touch-target);
+  }
+
+  .btn-secondary {
+    @apply bg-surface hover:bg-surface-hover text-text-primary font-medium px-4 py-2.5 rounded-md border border-border transition-colors cursor-pointer;
+    min-height: var(--touch-target);
+  }
+
+  .btn-danger {
+    @apply bg-danger/10 text-danger hover:bg-danger/20 font-medium px-4 py-2.5 rounded-md transition-colors cursor-pointer;
+    min-height: var(--touch-target);
+  }
+
+  .btn-ghost {
+    @apply text-text-muted hover:text-text-primary hover:bg-surface-hover px-3 py-2 rounded-md transition-colors cursor-pointer;
+    min-height: var(--touch-target);
+  }
+
+  /* === Form Inputs === */
+  .input-field {
+    @apply w-full bg-background border border-border rounded-md px-4 py-2.5 text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all;
+    min-height: var(--touch-target);
+  }
+
+  .select-field {
+    @apply input-field appearance-none cursor-pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-text-muted mb-1.5;
+  }
+
+  /* === Typography === */
+  .page-title {
+    @apply text-xl md:text-2xl font-bold text-text-primary;
+  }
+
+  .page-subtitle {
+    @apply text-sm md:text-base text-text-muted;
+  }
+
+  .stat-value {
+    @apply text-2xl md:text-3xl font-bold tracking-tight;
+  }
+
+  .badge {
+    @apply text-xs font-medium px-2.5 py-1 rounded-full inline-flex items-center;
+  }
+
+  .badge-success {
+    @apply badge bg-accent/15 text-accent;
+  }
+
+  .badge-danger {
+    @apply badge bg-danger/15 text-danger;
+  }
+
+  .badge-warning {
+    @apply badge bg-warning/15 text-warning;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary/15 text-primary-light;
+  }
+
+  /* === Layout Helpers === */
+  .grid-stats {
+    @apply grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4;
+  }
+
+  .grid-cards {
+    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6;
+  }
+
+  .page-container {
+    @apply py-4 md:py-6;
+    padding-left: var(--spacing-page);
+    padding-right: var(--spacing-page);
+  }
+  @media (min-width: 768px) {
+    .page-container {
+      padding-left: var(--spacing-page-md);
+      padding-right: var(--spacing-page-md);
+    }
+  }
+  @media (min-width: 1024px) {
+    .page-container {
+      padding-left: var(--spacing-page-lg);
+      padding-right: var(--spacing-page-lg);
+    }
+  }
+
+  /* === Skeleton Loading === */
+  .skeleton {
+    @apply bg-surface animate-pulse rounded-md;
+  }
+
+  /* === Divider === */
+  .divider {
+    @apply border-t border-border my-4 md:my-6;
   }
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
+/* ============================================
+   Utility Layer — Custom Animations
+   ============================================ */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
 
-body {
-  margin: 0;
-}
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out forwards;
+  }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+  .animate-slide-right {
+    animation: slideRight 0.3s ease-out forwards;
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
 }
