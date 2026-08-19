@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, User, Wallet, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { authService } from '../../services/authService';
-import { useAuth } from '../../hooks/useAuth';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -12,7 +11,6 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,16 +33,10 @@ export default function RegisterPage() {
 
     try {
       setIsLoading(true);
-      const res = await authService.register({ name, email, password });
+      await authService.register({ name, email, password });
       
-      // Update global context & local storage, instantly logging them in
-      login(
-        { _id: res._id, name: res.name, email: res.email },
-        res.token
-      );
-      
-      toast.success('Account created successfully!');
-      navigate('/dashboard');
+      toast.success('Account created successfully! Please sign in.');
+      navigate('/login');
     } catch (err: any) {
       // Global error handler handles the toast logic
       console.error('Registration failed', err);

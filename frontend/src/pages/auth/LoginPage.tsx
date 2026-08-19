@@ -28,7 +28,7 @@ export default function LoginPage() {
       // Update global context & local storage
       login(
         { _id: res._id, name: res.name, email: res.email },
-        res.token
+        res.accessToken
       );
       
       toast.success('Welcome back!');

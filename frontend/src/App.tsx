@@ -5,10 +5,10 @@ import { useAuth } from './hooks/useAuth';
 import DashboardLayout from './components/layout/DashboardLayout';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import DashboardPage from './pages/dashboard/DashboardPage';
 import type { ReactNode } from 'react';
 
-// Page placeholders — will be replaced in Phase 4-8
-const DashboardPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Dashboard</h1><p className="page-subtitle mt-1">Your financial overview</p></div>;
+// Page placeholders — will be replaced in Phase 5-8
 const TransactionsPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Transactions</h1><p className="page-subtitle mt-1">Track your spending</p></div>;
 const CategoriesPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Categories</h1><p className="page-subtitle mt-1">Organize your finances</p></div>;
 const BudgetsPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Budgets</h1><p className="page-subtitle mt-1">Set spending limits</p></div>;
