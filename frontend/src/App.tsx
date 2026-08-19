@@ -6,10 +6,10 @@ import DashboardLayout from './components/layout/DashboardLayout';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
+import TransactionsPage from './pages/dashboard/TransactionsPage';
 import type { ReactNode } from 'react';
 
-// Page placeholders — will be replaced in Phase 5-8
-const TransactionsPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Transactions</h1><p className="page-subtitle mt-1">Track your spending</p></div>;
+// Page placeholders — will be replaced in Phase 6-8
 const CategoriesPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Categories</h1><p className="page-subtitle mt-1">Organize your finances</p></div>;
 const BudgetsPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Budgets</h1><p className="page-subtitle mt-1">Set spending limits</p></div>;
 const SavingsGoalsPage = () => <div className="page-container animate-fade-in"><h1 className="page-title">Savings Goals</h1><p className="page-subtitle mt-1">Track your targets</p></div>;
