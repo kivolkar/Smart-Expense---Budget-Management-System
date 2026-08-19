@@ -48,6 +48,28 @@ paths:
           schema:
             type: string
             enum: ['cash', 'credit_card', 'debit_card', 'upi', 'bank_transfer']
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Regex text search matching the Transaction description
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [newest, oldest, amount_high, amount_low]
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Pagination offset
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Items returned per requested page
       responses:
         200:
           description: List of transactions matching query

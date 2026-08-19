@@ -40,5 +40,9 @@ const transactionSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// Performance Indexes for massive scale lookups
+transactionSchema.index({ user: 1, date: -1 });
+transactionSchema.index({ user: 1, category: 1 });
+
 const Transaction = mongoose.model('Transaction', transactionSchema);
 export default Transaction;

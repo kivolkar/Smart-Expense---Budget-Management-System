@@ -73,11 +73,11 @@ export const createTransaction = asyncHandler(async (req, res) => {
     res.status(201).json(createdTransaction);
 });
 
-// @desc    Get all transactions for user (with dynamic filtering)
+// @desc    Get all transactions for user (with dynamic filtering, search & pagination)
 // @route   GET /api/transactions
 // @access  Private
 export const getTransactions = asyncHandler(async (req, res) => {
-    const { category, type, paymentMethod, startDate, endDate } = req.query;
+    const { category, type, paymentMethod, startDate, endDate, search, sort, page = 1, limit = 10 } = req.query;
 
     let query = { user: req.user._id };
 
@@ -91,11 +91,35 @@ export const getTransactions = asyncHandler(async (req, res) => {
         if (endDate) query.date.$lte = new Date(endDate);
     }
 
+    // Keyword Search targeting the text description securely via regex
+    if (search) {
+        query.description = { $regex: search, $options: 'i' };
+    }
+
+    // Dynamic Database Sorting
+    let sortObj = { date: -1 }; 
+    if (sort === 'oldest') sortObj = { date: 1 };
+    if (sort === 'amount_high') sortObj = { amount: -1 };
+    if (sort === 'amount_low') sortObj = { amount: 1 };
+
+    // Mathematics for Pagination
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const total = await Transaction.countDocuments(query);
+
     const transactions = await Transaction.find(query)
         .populate('category', 'name type icon')
-        .sort({ date: -1 }); 
+        .sort(sortObj)
+        .skip(skip)
+        .limit(parseInt(limit)); 
 
-    res.json(transactions);
+    res.json({
+        transactions,
+        pagination: {
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / parseInt(limit))
+        }
+    });
 });
 
 // @desc    Get single transaction by ID
