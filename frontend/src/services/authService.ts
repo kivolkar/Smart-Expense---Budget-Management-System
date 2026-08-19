@@ -13,7 +13,12 @@ export const authService = {
   },
 
   getProfile: async () => {
-    const res = await api.get('/auth/profile');
+    const res = await api.post('/auth/logout');
     return res.data;
   },
+
+  changePassword: async (data: any) => {
+    const res = await api.put('/auth/password', data);
+    return res.data;
+  }
 };

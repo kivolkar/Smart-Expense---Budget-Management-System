@@ -135,3 +135,23 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
     res.json({ message: 'Logged out successfully' });
 });
+
+// @desc    Update user password
+// @route   PUT /api/auth/password
+// @access  Private
+export const updatePassword = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    // Find the user by ID from the decoded JWT payload
+    const user = await User.findById(req.user._id);
+
+    if (user && (await user.comparePassword(currentPassword))) {
+        user.password = newPassword;
+        await user.save(); // This triggers the pre-save bcrypt hashing natively
+        
+        res.json({ message: 'Password updated successfully' });
+    } else {
+        res.status(401);
+        throw new Error('Current password is incorrect');
+    }
+});

@@ -4,10 +4,12 @@ import {
     registerUser,
     loginUser,
     refreshToken,
-    logoutUser
+    logoutUser,
+    updatePassword
 } from '../controllers/authController.js';
 
 const router = express.Router();
+import { protect } from '../middleware/authMiddleware.js';
 
 const validateRequest = (req, res, next) => {
     const errors = validationResult(req);
@@ -33,5 +35,11 @@ router.post('/login', [
 
 router.post('/refresh-token', refreshToken);
 router.post('/logout', logoutUser);
+
+router.put('/password', protect, [
+    body('currentPassword').exists().withMessage('Current password is required'),
+    body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters'),
+    validateRequest
+], updatePassword);
 
 export default router;
