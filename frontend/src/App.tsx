@@ -70,7 +70,7 @@ function App() {
       <BrowserRouter>
         <AppRoutes />
         <Toaster
-          position="top-center"
+          position="bottom-center"
           toastOptions={{
             duration: 3000,
             style: {

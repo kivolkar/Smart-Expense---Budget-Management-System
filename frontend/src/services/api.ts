@@ -2,7 +2,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const api = axios.create({
-  baseURL: import.meta.env.FRONTEND_API_URL || '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -33,6 +33,8 @@ api.interceptors.response.use(
       if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
         window.location.href = '/login';
         toast.error('Session expired. Please log in again.');
+      } else {
+        toast.error(message);
       }
     } else {
       toast.error(message);
