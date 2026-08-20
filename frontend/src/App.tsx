@@ -41,13 +41,15 @@ function GuestRoute({ children }: { children: ReactNode }) {
 function AppRoutes() {
   return (
     <Routes>
+      {/* Redirect root explicitly to login */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
       {/* Public routes */}
       <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
       <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
 
       {/* Protected dashboard routes — DashboardLayout uses <Outlet /> */}
       <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
