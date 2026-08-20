@@ -45,7 +45,7 @@ export default function MonthlyOverviewChart({ data }: Props) {
             cursor={{ fill: '#2a2a3d' }}
             contentStyle={{ backgroundColor: '#1e1e2e', borderColor: '#2e2e42', borderRadius: '0.75rem' }}
             itemStyle={{ fontSize: '14px', fontWeight: 500 }}
-            formatter={(value: number) => formatCurrency(value)}
+            formatter={(value: any) => formatCurrency(value)}
           />
           
           <Legend wrapperStyle={{ paddingTop: '20px' }} />

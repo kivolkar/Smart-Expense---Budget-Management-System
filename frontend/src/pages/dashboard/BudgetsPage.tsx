@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Wallet, AlertCircle, Trash2, Edit2, ShieldAlert } from 'lucide-react';
+import { Plus, Wallet, Trash2, Edit2, ShieldAlert } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { budgetService } from '../../services/budgetService';
 import { useFetch } from '../../hooks/useFetch';

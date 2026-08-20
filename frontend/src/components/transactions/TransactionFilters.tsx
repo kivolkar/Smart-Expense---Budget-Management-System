@@ -1,4 +1,4 @@
-import { Search, Filter, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import type { TransactionFilters } from '../../types';
 
 interface Props {

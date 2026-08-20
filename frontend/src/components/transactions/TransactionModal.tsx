@@ -3,7 +3,7 @@ import { X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { transactionService } from '../../services/transactionService';
 import { categoryService } from '../../services/categoryService';
-import type { Transaction, Category, PaymentMethod } from '../../types';
+import type { Transaction, PaymentMethod } from '../../types';
 import { useFetch } from '../../hooks/useFetch';
 
 interface Props {

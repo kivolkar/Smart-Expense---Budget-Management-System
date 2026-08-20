@@ -90,7 +90,7 @@ export default function AnalyticsPage() {
                     verticalAlign="bottom" 
                     height={36} 
                     iconType="circle"
-                    formatter={(value, entry: any) => (
+                    formatter={(value, _entry: any) => (
                       <span className="text-sm text-text-muted">{value}</span>
                     )}
                   />
