@@ -54,3 +54,5 @@ This system eliminates the absolute prerequisite of Postman, as the UI actively 
 - Frontend: Vercel
 - Backend: Render
 - Database: MongoDB Atlas
+
+<img width="1662" height="905" alt="image" src="https://github.com/user-attachments/assets/a805ab4f-daf8-4ab3-aaa0-439d06098e90" />
