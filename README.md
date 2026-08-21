@@ -41,3 +41,16 @@ This system eliminates the absolute prerequisite of Postman, as the UI actively 
 - `controllers/` -> Advanced Async mathematical resolution patterns. Includes `$lookup` operator strategies and Promise.all native pipelining for maximum speed.
 - `routes/` -> Mounts endpoints combined with severe `express-validator` security guards to eliminate cross-site tampering or mismatched typings (e.g. string values inside numerical budget limits).
 - `uploads/` -> Configured static storage bin accepting strict MultiPart Form Uploads (Receipt PNG/JPEG ingestion) via `multer`.
+
+## 🚀 Live Demo
+
+### Frontend
+[Smart Expense Budget Management System](https://smart-expense-budget-management-sys-six.vercel.app)
+
+### Backend API / Swagger
+[API Documentation](https://smart-expense-budget-management-system-v3e0.onrender.com/api-docs)
+
+### Deployment
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
